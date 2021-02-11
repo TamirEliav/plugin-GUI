@@ -672,7 +672,7 @@ void SpikeChannel::setDefaultNameAndDescription()
 		break;
 	default: name = "INVALID "; break;
 	}
-	name += String(" p") + String(getSourceNodeID()) + String(".") + String(getSubProcessorIdx()) + String(" n") + String(getSourceTypeIndex());
+	name += String(" p") + String(getSourceNodeID()) + String(".") + String(getSubProcessorIdx()) + String(" n") + String(getSourceTypeIndex()+1);
 	setName(name);
 	setDescription(description + " spike data source");
 	setIdentifier("spikesource");

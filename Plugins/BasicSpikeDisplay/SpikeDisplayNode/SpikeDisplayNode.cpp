@@ -29,7 +29,7 @@
 
 SpikeDisplayNode::SpikeDisplayNode()
     : GenericProcessor  ("Spike Viewer")
-    , displayBufferSize (5)
+    , displayBufferSize (100)
     ,  redrawRequested  (false)
     , isRecording       (false)
 {

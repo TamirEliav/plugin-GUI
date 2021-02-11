@@ -550,7 +550,7 @@ SpikePlot::SpikePlot(SpikeDisplayCanvas* sdc, int elecNum, int p, String name_) 
 
     for (int i = 0; i < nChannels; i++)
     {
-        UtilityButton* rangeButton = new UtilityButton("250", Font("Small Text", 10, Font::plain));
+        UtilityButton* rangeButton = new UtilityButton("150", Font("Small Text", 10, Font::plain));
         rangeButton->setRadius(3.0f);
         rangeButton->addListener(this);
         addAndMakeVisible(rangeButton);
@@ -630,7 +630,7 @@ void SpikePlot::initAxes()
         WaveAxes* wAx = new WaveAxes(WAVE1 + i);
         wAxes.add(wAx);
         addAndMakeVisible(wAx);
-        ranges.add(250.0f); // default range is 250 microvolts
+        ranges.add(150.0f); // default range is 150 microvolts
     }
 
     for (int i = 0; i < nProjAx; i++)
@@ -701,7 +701,22 @@ void SpikePlot::buttonClicked(Button* button)
     int index = rangeButtons.indexOf(buttonThatWasClicked);
     String label;
 
-    if (ranges[index] == 250.0f)
+    if (ranges[index] == 100.0f)
+    {
+        ranges.set(index, 150.0f);
+        label = "150";
+    }
+    else if (ranges[index] == 150.0f)
+    {
+        ranges.set(index, 200.0f);
+        label = "200";
+    }
+    else if (ranges[index] == 200.0f)
+    {
+        ranges.set(index, 250.0f);
+        label = "250";
+    }
+    else if (ranges[index] == 250.0f)
     {
         ranges.set(index, 500.0f);
         label = "500";
@@ -710,11 +725,6 @@ void SpikePlot::buttonClicked(Button* button)
     {
         ranges.set(index, 100.0f);
         label = "100";
-    }
-    else if (ranges[index] == 100.0f)
-    {
-        ranges.set(index, 250.0f);
-        label = "250";
     }
 
     buttonThatWasClicked->setLabel(label);
@@ -835,11 +845,19 @@ void SpikePlot::setAllThresholds(float displayThreshold, float range)
     {
         label = "100";
     }
+    else if (range == 150)
+    {
+        label = "150";
+    }
+    else if (range == 200)
+    {
+        label = "200";
+    }
     else if (range == 250)
     {
         label = "250";
     }
-    else
+    else if (range == 500)
     {
         label = "500";
     }
@@ -869,8 +887,8 @@ WaveAxes::WaveAxes(int channel) : GenericAxes(channel),
     detectorThresholdLevel(0.0f),
     spikesReceivedSinceLastRedraw(0),
     spikeIndex(0),
-    bufferSize(5),
-    range(250.0f),
+    bufferSize(100),
+    range(150.0f),
     isOverThresholdSlider(false),
     isDraggingThresholdSlider(false),
     thresholdCoordinator(nullptr),
@@ -1234,8 +1252,8 @@ void WaveAxes::setDisplayThreshold(float threshold)
 
 // --------------------------------------------------
 
-ProjectionAxes::ProjectionAxes(int projectionNum) : GenericAxes(projectionNum), imageDim(500),
-    rangeX(250), rangeY(250), spikesReceivedSinceLastRedraw(0)
+ProjectionAxes::ProjectionAxes(int projectionNum) : GenericAxes(projectionNum), imageDim(300),
+    rangeX(150), rangeY(150), spikesReceivedSinceLastRedraw(0)
 {
     projectionImage = Image(Image::RGB, imageDim, imageDim, true);
 
@@ -1286,7 +1304,8 @@ bool ProjectionAxes::updateSpikeData(const SpikeEvent* s)
     //if (s.sortedId > 0)
     //    col = Colour(s.color[0], s.color[1], s.color[2]);
     //else
-        col = Colours::white;
+        //col = Colours::white;
+        col = Colour::fromFloatRGBA(1.0f, 1.0f, 1.0f, 0.3f);
 
 	const float* data = s->getDataPointer();
     updateProjectionImage(data[idx1], data[idx2], 1, col);
@@ -1304,8 +1323,9 @@ void ProjectionAxes::updateProjectionImage(float x, float y, float gain, Colour 
     {
 		float xf = x;
         float yf = float(imageDim) - y; // in microvolts
-
+        
         g.setColour(col);
+        //g.setColour(col.withAlpha(0.1));
         g.fillEllipse(xf,yf,2.0f,2.0f);
     }
 
